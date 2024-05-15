@@ -1,19 +1,40 @@
-function uniquePathsWithObstacles(obstacleGrid) {
-  const m = obstacleGrid.length;
-  const n = obstacleGrid[0].length;
-  const dp = new Array(m).fill(0).map(() => new Array(n).fill(0));
-  if (obstacleGrid[0][0] === 1) return 0;
-  dp[0][0] = 1;
-  for (let i = 1; i < m; i++) {
-    if (obstacleGrid[i][0] === 0) dp[i][0] = dp[i - 1][0];
-  }
-  for (let j = 1; j < n; j++) {
-    if (obstacleGrid[0][j] === 0) dp[0][j] = dp[0][j - 1];
-  }
-  for (let i = 1; i < m; i++) {
-    for (let j = 1; j < n; j++) {
-      if (obstacleGrid[i][j] === 0) dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+const strandSort = (arr) => {
+  const extract = (arr, x) => {
+    const extracted = [];
+    let i = 0;
+    while (i < arr.length) {
+      if (x.includes(arr[i])) {
+        extracted.push(arr.splice(i, 1)[0]);
+      } else {
+        i++;
+      }
     }
+    return extracted;
+  };
+  const merge = (a, b) => {
+    const merged = [];
+    let i = 0;
+    let j = 0;
+    while (i < a.length && j < b.length) {
+      if (a[i] < b[j]) {
+        merged.push(a[i]);
+        i++;
+      } else {
+        merged.push(b[j]);
+        j++;
+      }
+    }
+    return merged.concat(i < a.length ? a.slice(i) : b.slice(j));
+  };
+  let sorted = [];
+  while (arr.length > 0) {
+    let sublist = [arr.shift()];
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] > sublist[sublist.length - 1]) {
+        sublist.push(arr.splice(i, 1)[0]);
+      }
+    }
+    sorted = merge(sorted, sublist);
   }
-  return dp[m - 1][n - 1];
-}
+  return sorted;
+};
